@@ -29,6 +29,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.example.fiverrmorbedpractice.alarm_manager.MyAlarmReceiver
 import com.example.fiverrmorbedpractice.presentaion.change_image_screen.ChangingImageViewModel
 import com.example.fiverrmorbedpractice.presentaion.change_image_screen.ScreenChangeImage
+import com.example.fiverrmorbedpractice.service.MyBgService
+import com.example.fiverrmorbedpractice.service.MyFgService
 import com.example.fiverrmorbedpractice.ui.theme.FiverrMorbedPracticeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -74,6 +76,32 @@ class MainActivity : ComponentActivity() {
                         }) {
                             Text(text = "Start")
                         }
+                        Button(onClick = {
+                            setAlarm(this@MainActivity)
+                        }) {
+                            Text(text = "Alarm")
+                        }
+                        Button(onClick = {
+                            setAlarmNew(this@MainActivity)
+                        }) {
+                            Text(text = "Alarm New")
+                        }
+                        Button(onClick = {
+                            val intent = Intent(this@MainActivity , MyBgService::class.java)
+                            this@MainActivity.startService(intent)
+                        }) {
+                            Text(text = "Start Bg Service")
+                        }
+                        Button(onClick = {
+                            val intent = Intent(this@MainActivity , MyFgService::class.java)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                this@MainActivity.startForegroundService(intent)
+                            }else{
+                                startService(intent)
+                            }
+                        }) {
+                            Text(text = "Start FG Service")
+                        }
                     }
 
                     
@@ -91,7 +119,21 @@ class MainActivity : ComponentActivity() {
             } else {
                 PendingIntent.getBroadcast(context, 0, intent,0)
             }
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+        alarmManager.set(AlarmManager.RTC, time, pendingIntent)
+    }
+
+    fun setAlarmNew(context: Context) {
+        val time = System.currentTimeMillis() + 10000
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val aIntent = Intent(context , AutoStartActivity::class.java)
+        aIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        val pendingIntent =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.getActivity(context ,0,aIntent , PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE)
+            } else {
+                PendingIntent.getActivity(context ,0,aIntent , 0)
+            }
+        alarmManager.set(AlarmManager.RTC, time, pendingIntent)
     }
 }
 

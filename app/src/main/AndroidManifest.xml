@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.fiverrmorbedpractice">
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" ></uses-permission>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,16 +13,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FiverrMorbedPractice"
         tools:targetApi="31">
+        <service
+            android:foregroundServiceType="phoneCall"
+            android:name=".alarm_manager.MyService"
+            android:enabled="true"
+            android:exported="true" />
+        <service android:name=".service.MyBgService" />
+        <service android:name=".service.MyFgService"
+            android:permission="android.permission.FOREGROUND_SERVICE"/>
+
         <activity
             android:name=".AutoStartActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:label="@string/title_activity_auto_start"
-            android:theme="@style/Theme.FiverrMorbedPractice.Fullscreen" />
-        <activity
-            android:name=".ui.login.CallActivity"
-            android:exported="false"
-            android:label="@string/title_activity_call" />
+            android:theme="@style/Theme.AppCompat.Dialog" />
 
         <receiver android:name=".alarm_manager.MyAlarmReceiver" />
 

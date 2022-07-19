@@ -6,15 +6,26 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.example.fiverrmorbedpractice.AutoStartActivity
 import com.example.fiverrmorbedpractice.R
 
 class MyAlarmReceiver: BroadcastReceiver() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
         try {
+            val service = Intent(context , MyService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context!!.startForegroundService(service)
+            }else{
+                println("lower")
+            }
             println("naser notify call")
-            showNotification(context!!)
-            context.startActivity(intent)
+            val intent2 = Intent(context , AutoStartActivity::class.java)
+            intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context!!.startForegroundService(service)
+            showNotification(context)
         }catch (ex:Exception){
             println("naser exeption $ex")
         }
